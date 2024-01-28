@@ -34,34 +34,3 @@ jobs:
           mvn $MAVEN_CLI_OPTS compile
           chmod +x runtests.sh
           ./runtests.sh
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.ref == 'refs/heads/main'
-
-    container:
-      image: matderosa/maven-3.8-openjdk-17-gcc8.5
-
-    env:
-      MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$GITHUB_WORKSPACE/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
-      MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Cache Maven dependencies
-        uses: actions/cache@v2
-        with:
-          path: $GITHUB_WORKSPACE/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Deploy
-        run: |
-          mvn $MAVEN_CLI_OPTS clean
-          mvn $MAVEN_CLI_OPTS compile
-          chmod +x runtests.sh
-          ./runtests.sh
