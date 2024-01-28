@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: maven:3.8-openjdk-17
+      image: matderosa/maven-3.8-openjdk-17-gcc8.5
 
     env:
       MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$GITHUB_WORKSPACE/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
@@ -41,7 +41,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     container:
-      image: maven:3.8-openjdk-17
+      image: matderosa/maven-3.8-openjdk-17-gcc8.5
 
     env:
       MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$GITHUB_WORKSPACE/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
