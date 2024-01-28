@@ -3,30 +3,27 @@ name: Maven Build and Test
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    container:
+      image: maven:3.8-openjdk-17
+
     env:
       MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$GITHUB_WORKSPACE/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
       MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
 
-    container:
-      image: maven:3.8-openjdk-17
-
-    services:
-      - docker:dind
-
     steps:
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Cache Maven dependencies
         uses: actions/cache@v2
         with:
-          path: ${{ env.MAVEN_OPTS }}/repository
+          path: $GITHUB_WORKSPACE/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
@@ -41,26 +38,23 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
+
+    container:
+      image: maven:3.8-openjdk-17
 
     env:
       MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$GITHUB_WORKSPACE/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
       MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
 
-    container:
-      image: maven:3.8-openjdk-17
-
-    services:
-      - docker:dind
-
     steps:
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Cache Maven dependencies
         uses: actions/cache@v2
         with:
-          path: ${{ env.MAVEN_OPTS }}/repository
+          path: $GITHUB_WORKSPACE/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
