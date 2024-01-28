@@ -20,7 +20,7 @@ public class Main {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             Lexer prova = new Lexer(br);
             parser p = new parser(prova);
-
+            System.out.println("Parsing...");
             DefaultMutableTreeNode root = (DefaultMutableTreeNode) p.parse().value;
             tree=new JTree(root);
 
